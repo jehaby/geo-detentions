@@ -73,6 +73,6 @@
           f (first @ovds)]
       ;; [:h1 (str (:marker-pos data))]
       [:h1 "OVD: "
-       [:p [:string (str @su)]]
+       [:p [:strong (str @su)]]
        [:p (str f)]]
       )]])
