@@ -4,7 +4,6 @@
    ;; [geo-detentions.ovds :refer [ovds]]
    [geo-detentions.db :as db]
    [re-posh.core :as rp]
-   ["./data.js" :refer [detensions]]
    ))
 
 (def default-interceptors [debug trim-v])
