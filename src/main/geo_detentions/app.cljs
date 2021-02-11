@@ -4,11 +4,12 @@
    [geo-detentions.views :as views]
    [geo-detentions.subs :as subs]
    [reagent.dom :as rdom]
+   [re-posh.core :as rp]
    ))
 
 (defn init! []
-  (re-frame.core/dispatch-sync [:initialise-db]) ;; TODO: use just dispatch
+  (rp/dispatch-sync [:initialize-db]) ;; TODO: use just dispatch
   (rdom/render [views/main]  (.getElementById js/document "app")))
 
 (comment
-  )
+)

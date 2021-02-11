@@ -1,19 +1,24 @@
 (ns geo-detentions.events
   (:require
    [re-frame.core :refer [reg-event-db debug trim-v]]
+   ;; [geo-detentions.ovds :refer [ovds]]
+   [geo-detentions.db :as db]
+   [re-posh.core :as rp]
+   ["./data.js" :refer [detensions]]
    ))
 
 (def default-interceptors [debug trim-v])
 
-(reg-event-db
- :initialise-db
+(rp/reg-event-ds
+ :initialize-db
  default-interceptors
- (fn [_]
-   {:map-data {:marker-pos [55.751167, 37.620716]}}
-   ))
+ (fn [_ _]
+   db/initial-db))
 
-(reg-event-db
- :change-c
+(def selected-ovd-id 141666)
+
+(rp/reg-event-ds
+ :select-ovd
  default-interceptors
- (fn [db]
-   (update-in db [:map-data :marker-pos 0] (partial + 0.001))))
+ (fn [_ [id]]
+    [[:db/add selected-ovd-id :selected-ovd id]]))

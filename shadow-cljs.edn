@@ -8,8 +8,10 @@
  [[cljs-ajax "0.8.0"]
   [day8.re-frame/http-fx "v0.2.0"] ;; TODO: 0.2.1? remove unused deps
   [metosin/reitit "0.5.5"]
-  [org.clojars.frozenlock/reagent-keybindings "1.0.2"]
-  [re-frame "1.1.1"]]
+  [re-frame "1.1.1"]
+  [datascript "1.0.3"]
+  [re-posh "0.3.2"]
+  ]
 
  :dev-http {8142
             {:root "public"
