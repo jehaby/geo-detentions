@@ -61,18 +61,30 @@
     (fn []
       [map-inner nil @ovds])))
 
+(defn detentions-table []
+  (when-let [events @(rp/subscribe [:selected-ovd-events])]
+    [:table.table
+     [:thead
+      [:tr
+       [:th "Название"]
+       [:th "Место"]
+       [:th "Количество задержанных"]
+       ;; [:th "Название"]
+       ;; [:th "Название"]
+       ]]
+
+     [:tbody
+      (for [e events]
+        [:tr
+         [:td (:event/event_title e)]
+         [:td (:event/place e)]
+         [:td (:event/detentions e)]
+         ])]]))
+
 (defn main []
   [:div
    [map-outer]
-   [:div
-    [:button {:on-click #(dispatch [:change-c])} "inc"]
-    (let [
-          ;; data @(subscribe [:map-data])
-          ovds (rp/subscribe [:ovds])
-          su (rp/subscribe [:selected-ovd])
-          f (first @ovds)]
-      ;; [:h1 (str (:marker-pos data))]
-      [:h1 "OVD: "
-       [:p [:strong (str @su)]]
-       [:p (str f)]]
-      )]])
+
+   [detentions-table]])
+
+
