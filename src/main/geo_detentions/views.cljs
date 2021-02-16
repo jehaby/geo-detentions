@@ -87,6 +87,7 @@
 
      [:tbody
       (for [e events]
+        ^{:key (:event/event_id e)}
         [:tr
          [:td (:event/event_id e)]
          [:td (:event/ovd e)]
