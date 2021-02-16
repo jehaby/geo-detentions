@@ -66,13 +66,10 @@
      [:thead
       [:tr
        [:th "id"]
-       [:th "ovd"]
-       [:th "region"]
        [:th "Название"]
-       [:th "Место"]
+       [:th "Место задержания"]
        [:th "Количество задержанных"]
        [:th "Дата"]
-       ;; [:th "Регион"]
        [:th "Описание"]
        [:th "Согласовано"]
        [:th "event type"]
@@ -81,7 +78,6 @@
        [:th "subject story"]
        [:th "Тип организатора"]
        [:th "Организатор"]
-       [:th "Место задержания"]
        [:th "Ссылки"]
        ]]
 
@@ -90,22 +86,19 @@
         ^{:key (:event/event_id e)}
         [:tr
          [:td (:event/event_id e)]
-         [:td (:event/ovd e)]
-         [:td (:event/region e)]
          [:td (:event/event_title e)]
          [:td (:event/place e)]
          [:td (:event/detentions e)]
          [:td (:event/date e)]
          ;; [:td (:event/region e)]
          [:td (:event/description e)]
-         [:td (:event/agreement e)]
-         [:td (:event/event_type e)]
+         [:td (-> e :event/agreement :agreement)]
+         [:td (-> e :event/event_type :event_type)]
          [:td (:event/subject_type e)]
          [:td (:event/subjec_topic e)]
          [:td (:event/subjec_story e)]
-         [:td (:event/organizer_type e)]
+         [:td (-> e :event/organizer_type :organizer_type)]
          [:td (:event/organizer_name e)]
-         [:td (:event/place e)]
          [:td (:event/links e)]
          ])]]))
 

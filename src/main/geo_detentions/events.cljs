@@ -26,7 +26,6 @@
  (fn [_ [filter-name value]]
    [[:db/add db/filter-entity-id filter-name value]]))
 
-
 (rp/reg-event-fx
  :load-detentions
  default-interceptors
@@ -168,10 +167,18 @@
                          ))
 
 
+  (datascript/pull @@rdb/store '[:event/event_title
+                                 {:event/ovd [:ovd/name]}
+                                 {:event/agreement (:agreement)}
+                                 ] 142880)
+
+  (datascript/pull @@rdb/store '[:event/event_title] 142880)
+
+
   (datascript/q '[:find ?name
                   :where
                   ;; [24 :ovd/id 24]
-                  [24 :ovd/name ?name]
+                  [2 :ovd/name ?name]
                   ;; [?e :]
                   ]
                 @@rdb/store)

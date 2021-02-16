@@ -43,7 +43,10 @@
  :<- [:selected-event-ids]
  (fn [entity-ids _]
    {:type    :pull-many
-    :pattern '[*]
+    :pattern '[*
+               {:event/agreement [:agreement]}
+               {:event/event_type [:event_type]}
+               {:event/organizer_type [:organizer_type]}]
     :ids      (reduce into [] entity-ids)}))
 
 (rp/reg-sub
