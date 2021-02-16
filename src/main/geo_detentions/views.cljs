@@ -3,8 +3,7 @@
    [reagent.core :as r]
    [re-posh.core :as rp]
    [goog.object]
-   [re-frame.core :refer [subscribe dispatch]]
-   ))
+   [geo-detentions.subs :refer [<sub]]))
 
 (defn map-inner [data ovds]
   (let [state (atom nil)
@@ -33,7 +32,8 @@
                         (.addTo m))
 
               ovd-click-handler
-              #(rp/dispatch [:select-ovd (goog.object.getValueByKeys % "target" "ovdId")])]
+              #(let [ovd-id (goog.object.getValueByKeys % "target" "ovdId")]
+                 (rp/dispatch [:set-filter :filter/ovd  ovd-id]))]
 
           (doseq [[id name loc addr] ovds]
             (let [loc (array (:lat loc) (:lon loc))
@@ -56,35 +56,97 @@
      )))
 
 (defn map-outer []
-  (let [;; data (subscribe [:map-data])
-        ovds (rp/subscribe [:ovds])]
+  (let [ovds (<sub [:ovds])]
     (fn []
-      [map-inner nil @ovds])))
+      [map-inner nil ovds])))
 
 (defn detentions-table []
-  (when-let [events @(rp/subscribe [:selected-ovd-events])]
-    [:table.table
+  (when-let [events (<sub [:selected-events])]
+    [:table.table.content
      [:thead
       [:tr
+       [:th "id"]
+       [:th "ovd"]
+       [:th "region"]
        [:th "Название"]
        [:th "Место"]
        [:th "Количество задержанных"]
-       ;; [:th "Название"]
-       ;; [:th "Название"]
+       [:th "Дата"]
+       ;; [:th "Регион"]
+       [:th "Описание"]
+       [:th "Согласовано"]
+       [:th "event type"]
+       [:th "subject type"]
+       [:th "subject topic"]
+       [:th "subject story"]
+       [:th "Тип организатора"]
+       [:th "Организатор"]
+       [:th "Место задержания"]
+       [:th "Ссылки"]
        ]]
 
      [:tbody
       (for [e events]
         [:tr
+         [:td (:event/event_id e)]
+         [:td (:event/ovd e)]
+         [:td (:event/region e)]
          [:td (:event/event_title e)]
          [:td (:event/place e)]
          [:td (:event/detentions e)]
+         [:td (:event/date e)]
+         ;; [:td (:event/region e)]
+         [:td (:event/description e)]
+         [:td (:event/agreement e)]
+         [:td (:event/event_type e)]
+         [:td (:event/subject_type e)]
+         [:td (:event/subjec_topic e)]
+         [:td (:event/subjec_story e)]
+         [:td (:event/organizer_type e)]
+         [:td (:event/organizer_name e)]
+         [:td (:event/place e)]
+         [:td (:event/links e)]
          ])]]))
+
+(defn filters []
+  [:div.navbar
+   (let [filters (<sub [:filter])]
+     (prn "IN VIEW FILTER IS " filters)
+
+     [:div.navbar-start
+      [:div.navbar-item
+       [:div.field
+        [:label.label "Дата мин."]
+        [:div.control
+         [:input
+          {:type :date
+           :name :date-from
+           :min "2013-01-01"
+           :value (:filter/date-from filters)
+           :on-change
+           #(let [v (goog.object/getValueByKeys % "target" "value")]
+              (rp/dispatch [:set-filter :filter/date-from v]))
+           }]]]]
+
+      [:div.navbar-item
+       [:div.field
+        [:label.label "Дата макс."]
+        [:div.control
+         [:input
+          {:type :date
+           :name :date-till
+           :max "2022-01-01"
+           :value (:filter/date-till filters)
+           :on-change
+           #(let [v (goog.object/getValueByKeys % "target" "value")]
+              (rp/dispatch [:set-filter :filter/date-till v]))
+           }]]]]
+
+      ])])
+
 
 (defn main []
   [:div
    [map-outer]
-
+   [filters]
    [detentions-table]])
-
-

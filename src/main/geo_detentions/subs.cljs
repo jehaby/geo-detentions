@@ -1,6 +1,7 @@
 (ns geo-detentions.subs
   (:require
-   [re-frame.core :refer [reg-sub subscribe]]
+   [geo-detentions.db :as db]
+
    [re-posh.core :as rp])
   )
 
@@ -13,8 +14,7 @@
              :where [?e :ovd/id ?id]
              [?e :ovd/name ?name]
              [?e :ovd/location ?loc]
-             [?e :ovd/address ?address]]
-    }))
+             [?e :ovd/address ?address]]}))
 
 (rp/reg-sub
  :selected-ovd
@@ -23,23 +23,35 @@
     :query '[:find ?id
              :where [?e :selected-ovd ?id]]}))
 
-
 (rp/reg-sub
- :selected-ovd-event-ids
+ :selected-event-ids
  (fn [_ _]
    {:type :query
     :query '[:find ?e
-             :where [_ :selected-ovd ?ovd-id]
+             :where [_ :filter/ovd ?ovd-id]
              [?o :ovd/id ?ovd-id]
-             [?e :event/ovd ?o]]}))
+             [?e :event/ovd ?o]
+
+             [?e :event/date ?date]
+             [_ :filter/date-from ?date-from]
+             [_ :filter/date-till ?date-till]
+             [(< ?date ?date-till)]
+             [(< ?date-from ?date)]]}))
 
 (rp/reg-sub
- :selected-ovd-events
- :<- [:selected-ovd-event-ids]
+ :selected-events
+ :<- [:selected-event-ids]
  (fn [entity-ids _]
    {:type    :pull-many
     :pattern '[*]
     :ids      (reduce into [] entity-ids)}))
+
+(rp/reg-sub
+ :filter
+ (fn [_ _]
+   {:type :pull
+    :pattern '[*]
+    :id db/filter-entity-id}))
 
 (comment
 
@@ -60,7 +72,7 @@
 (defn <sub
   [c]
   (try
-    (-> (subscribe c)
+    (-> (rp/subscribe c)
         (deref))
     (catch js/Error e
       (throw e))))

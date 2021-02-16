@@ -1,6 +1,6 @@
 (ns geo-detentions.events
   (:require
-   [re-frame.core :refer [reg-event-db debug trim-v]]
+   [re-frame.core :refer [trim-v debug]]
    ;; [geo-detentions.ovds :refer [ovds]]
    [goog.labs.format.csv :as csv]
    [geo-detentions.db :as db]
@@ -12,37 +12,31 @@
    [re-posh.db :as rdb] ;; TODO: remove in prod
    ))
 
-(def default-interceptors [debug trim-v])
+(def default-interceptors [trim-v debug])
 
-(rp/reg-event-ds
+(rp/reg-event-fx
  :initialize-db
  default-interceptors
  (fn [_ _]
-   db/initial-db))
-
-(def selected-ovd-id 141666)
+   {:transact db/initial-db}))
 
 (rp/reg-event-ds
- :select-ovd
+ :set-filter
  default-interceptors
- (fn [_ [id]]
-   [[:db/add selected-ovd-id :selected-ovd id]]))
+ (fn [_ [filter-name value]]
+   [[:db/add db/filter-entity-id filter-name value]]))
+
 
 (rp/reg-event-fx
  :load-detentions
  default-interceptors
  (fn [_ _]
-   (prn "in load detentions")
-   {
-    :http-xhrio {:method :get
+   {:http-xhrio {:method :get
                  :uri (str "/data/data_2017_2019.csv")
                  :timeout 5000
-                 ;; :format (transit-request-format)
                  :response-format (raw-response-format)
                  :on-success [:load-detentions-success]
-                 :on-failure [:load-detentions-failure]}
-    }
-   ))
+                 :on-failure [:load-detentions-failure]}}))
 
 (defn csv-data->maps [csv-data key-ns]
   (map zipmap
@@ -86,8 +80,7 @@
      :event/agreement #(get agreements %)
      :event/event_type #(get event_types %)
      :event/region #(get regions % %)
-     :event/organizer_type #(get organizer_types %)}
-    ))
+     :event/organizer_type #(get organizer_types %)}))
 
 (defn to-tx-data
   "Returns data prepared for insertion into datascript db"
@@ -110,10 +103,10 @@
          csv-keys (->> (first parsed)
                        (map (partial keyword "event"))
                        (into []))
-         c-fns (coercion-fns ds)
-         data (map #(to-tx-data c-fns csv-keys %) (rest parsed))]
-     {:transact data}
-     )))
+         c-fns (coercion-fns ds)]
+     {:transact (map
+                 #(to-tx-data c-fns csv-keys %)
+                 (rest parsed))})))
 
 (rp/reg-event-fx
  :load-detentions-failure

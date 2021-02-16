@@ -5,9 +5,18 @@
    [geo-detentions.ovds :refer [ovds]]
    ))
 
+(def filter-entity-id 142666)
+
+(def filters [{:db/id filter-entity-id
+              :filter/date-from "2013-01-01"
+              :filter/date-till "2021-12-31"
+              ;; :filter/ovd
+              }])
+
 (def initial-db
   (concat
    ovds
+   filters
    [{:region "Москва"}
      {:region "Санкт-Петербург"}
      {:agreement "-"}
