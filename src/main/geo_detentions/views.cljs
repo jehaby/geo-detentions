@@ -60,16 +60,27 @@
     (fn []
       [map-inner nil ovds])))
 
+(defn sortable-table-header
+  [{sort-field :sort/field asc? :sort/asc?} field label]
+  (let [cur-sort-field? (= sort-field field)
+        sort-sym (if asc? " ↘" " ↗")]
+    [:th
+     {:on-click
+      #(let [a? (if cur-sort-field? (not asc?) true)]
+         (rp/dispatch [:set-sort field a?]))}
+     (str label (when cur-sort-field? sort-sym))]))
+
 (defn detentions-table []
-  (when-let [events (<sub [:selected-events])]
+  (let [events (<sub [:sorted-events])
+        sorting (<sub [:sorting])]
     [:table.table.content
      [:thead
       [:tr
        [:th "id"]
        [:th "Название"]
        [:th "Место задержания"]
-       [:th "Количество задержанных"]
-       [:th "Дата"]
+       (sortable-table-header sorting :event/detentions "Количество задержанных")
+       (sortable-table-header sorting :event/date "Дата")
        [:th "Описание"]
        [:th "Согласовано"]
        [:th "event type"]
@@ -105,8 +116,6 @@
 (defn filters []
   [:div.navbar
    (let [filters (<sub [:filter])]
-     (prn "IN VIEW FILTER IS " filters)
-
      [:div.navbar-start
       [:div.navbar-item
        [:div.field

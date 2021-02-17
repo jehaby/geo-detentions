@@ -1,7 +1,7 @@
 (ns geo-detentions.subs
   (:require
    [geo-detentions.db :as db]
-
+   [re-frame.core :as re-frame]
    [re-posh.core :as rp])
   )
 
@@ -48,6 +48,22 @@
                {:event/event_type [:event_type]}
                {:event/organizer_type [:organizer_type]}]
     :ids      (reduce into [] entity-ids)}))
+
+(rp/reg-sub
+ :sorting
+ (fn [_ _]
+   {:type :pull
+    :pattern '[*]
+    :id db/sort-entity-id}))
+
+(re-frame/reg-sub
+ :sorted-events
+ :<- [:selected-events]
+ :<- [:sorting]
+ (fn [[events sorting] _]
+   (let [comparator (if (:sort/asc? sorting) < >)
+         field (:sort/field sorting)]
+     (sort-by field comparator events))))
 
 (rp/reg-sub
  :filter

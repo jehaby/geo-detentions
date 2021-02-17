@@ -26,6 +26,13 @@
  (fn [_ [filter-name value]]
    [[:db/add db/filter-entity-id filter-name value]]))
 
+(rp/reg-event-ds
+ :set-sort
+ default-interceptors
+ (fn [_ [field asc?]]
+   [[:db/add db/sort-entity-id :sort/field field]
+    [:db/add db/sort-entity-id :sort/asc? asc?]]))
+
 (rp/reg-event-fx
  :load-detentions
  default-interceptors

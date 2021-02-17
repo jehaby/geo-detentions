@@ -6,17 +6,21 @@
    ))
 
 (def filter-entity-id 142666)
+(def sort-entity-id 143666)
 
 (def filters [{:db/id filter-entity-id
               :filter/date-from "2013-01-01"
-              :filter/date-till "2021-12-31"
-              ;; :filter/ovd
-              }])
+              :filter/date-till "2021-12-31"}])
+
+(def sorting [{:db/id sort-entity-id
+            :sort/field :event/date
+            :sort/asc? true}])
 
 (def initial-db
   (concat
    ovds
    filters
+   sorting
    [{:region "Москва"}
      {:region "Санкт-Петербург"}
      {:agreement "-"}
