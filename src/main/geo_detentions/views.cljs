@@ -66,8 +66,8 @@
         sort-sym (if asc? " ↘" " ↗")]
     [:th
      {:on-click
-      #(let [a? (if cur-sort-field? (not asc?) true)]
-         (rp/dispatch [:set-sort field a?]))}
+      #(let [new-asc? (if cur-sort-field? (not asc?) true)]
+         (rp/dispatch [:set-sort field new-asc?]))}
      (str label (when cur-sort-field? sort-sym))]))
 
 (defn detentions-table []
