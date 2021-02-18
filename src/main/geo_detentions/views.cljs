@@ -3,7 +3,8 @@
    [reagent.core :as r]
    [re-posh.core :as rp]
    [goog.object]
-   [geo-detentions.subs :refer [<sub]]))
+   [geo-detentions.subs :refer [<sub]]
+   [geo-detentions.db :as db]))
 
 (defn map-inner [data ovds]
   (let [state (atom nil)
@@ -91,7 +92,6 @@
        [:th "Организатор"]
        [:th "Ссылки"]
        ]]
-
      [:tbody
       (for [e events]
         ^{:key (:event/event_id e)}
@@ -101,14 +101,13 @@
          [:td (:event/place e)]
          [:td (:event/detentions e)]
          [:td (:event/date e)]
-         ;; [:td (:event/region e)]
          [:td (:event/description e)]
-         [:td (-> e :event/agreement :agreement)]
-         [:td (-> e :event/event_type :event_type)]
+         [:td (-> e :event/agreement db/enums->vals)]
+         [:td (-> e :event/event_type db/enums->vals)]
          [:td (:event/subject_type e)]
-         [:td (:event/subjec_topic e)]
-         [:td (:event/subjec_story e)]
-         [:td (-> e :event/organizer_type :organizer_type)]
+         [:td (:event/subject_topic e)]
+         [:td (:event/subject_story e)]
+         [:td (-> e :event/organizer_type db/enums->vals)]
          [:td (:event/organizer_name e)]
          [:td (:event/links e)]
          ])]]))
@@ -146,7 +145,6 @@
            }]]]]
 
       ])])
-
 
 (defn main []
   [:div

@@ -74,19 +74,16 @@
 (defn coercion-fns
   "Returns map of key-fn for coercion values of event csv row"
   [conn]
-  (let [regions         (attr-map conn :region)
-        agreements      (attr-map conn :agreement)
-        event_types      (attr-map conn :event_type)
-        organizer_types  (attr-map conn :organizer_type)]
+  (let [val->keyword (fn [field val] (get-in db/vals->keywords [field val]))]
     {:event/detentions str->int
      :event/event_id str->int
      :event/year str->int
      :event/ovd (make-ovd-coercer conn)
-     ;;   :event/date  str->int
-     :event/agreement #(get agreements %)
-     :event/event_type #(get event_types %)
-     :event/region #(get regions % %)
-     :event/organizer_type #(get organizer_types %)}))
+     :event/agreement (partial val->keyword :event/agreement)
+     :event/event_type (partial val->keyword :event/event_type)
+     :event/region (partial val->keyword :event/region)
+     :event/organizer_type (partial val->keyword :event/organizer_type)
+     }))
 
 (defn to-tx-data
   "Returns data prepared for insertion into datascript db"
@@ -99,7 +96,6 @@
        (assoc m k (coercion-fn csv-val))))
    {}
    (range (count csv-keys))))
-
 
 (rp/reg-event-fx
  :load-detentions-success
@@ -188,5 +184,13 @@
                   [2 :ovd/name ?name]
                   ;; [?e :]
                   ]
+                @@rdb/store)
+
+  (datascript/q '[:find ?e ?n ?rn
+                  :where [?e :event/event_id 1000]
+                  [?e :event/event_type ?et]
+                  [?e :event/region ?r]
+                  [_ ?et ?n]
+                  [_ ?r ?rn]]
                 @@rdb/store)
   )

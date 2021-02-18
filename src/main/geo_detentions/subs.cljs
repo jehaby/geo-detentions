@@ -2,8 +2,7 @@
   (:require
    [geo-detentions.db :as db]
    [re-frame.core :as re-frame]
-   [re-posh.core :as rp])
-  )
+   [re-posh.core :as rp]))
 
 (rp/reg-sub
  :ovds
@@ -43,10 +42,7 @@
  :<- [:selected-event-ids]
  (fn [entity-ids _]
    {:type    :pull-many
-    :pattern '[*
-               {:event/agreement [:agreement]}
-               {:event/event_type [:event_type]}
-               {:event/organizer_type [:organizer_type]}]
+    :pattern '[*]
     :ids      (reduce into [] entity-ids)}))
 
 (rp/reg-sub
@@ -71,22 +67,6 @@
    {:type :pull
     :pattern '[*]
     :id db/filter-entity-id}))
-
-(comment
-
-  (datascript/q '[:find
-                  ?e
-                  :in $ ?ovd-id
-                  :where
-                  [?o :ovd/id ?ovd-id]
-                  [?e :event/ovd ?o]
-                  [?e :event/event_title ?t]
-                  [?e :event/detentions ?d]
-                  ]
-                @@rdb/store
-                108
-                ))
-
 
 (defn <sub
   [c]
