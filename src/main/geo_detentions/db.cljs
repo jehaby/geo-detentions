@@ -43,7 +43,7 @@
                       (map clojure.set/map-invert)
                       (into {})))
 
-(def event-enums (->> (seq enums->vals)
+(def event-enums (->> (seq enums->vals) ;; TODO: remove or rethink (how to get vals(labels) from datascript on pull?)
                       (map (partial apply hash-map))))
 
 (def initial-db
