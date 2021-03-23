@@ -24,7 +24,10 @@
  :set-filter
  default-interceptors
  (fn [_ [filter-name value]]
-   [[:db/add db/filter-entity-id filter-name value]]))
+   (concat
+    [[:db/retract db/filter-entity-id filter-name]]
+    (for [v (if (sequential? value) value [value])]
+     [:db/add db/filter-entity-id filter-name v]))))
 
 (rp/reg-event-ds
  :set-sort
@@ -186,6 +189,29 @@
                   ]
                 @@rdb/store)
 
+
+  (->
+   (datascript/pull @@rdb/store '[*] db/filter-entity-id)
+   :filter/event_types
+   ;; clj->js
+   )
+
+
+  (->
+   (datascript/pull @@rdb/store '[*] 144050)
+   ;; :filter/event_types
+   ;; clj->js
+   )
+
+  (datascript/q '[:find ?e :where [?e :event/event_id 1285]] @@rdb/store)
+
+
+
+
+  (def c (datascript/create-conn {:aka {:db/cardinality :db.cardinality/many}}))
+
+
+
   (datascript/q '[:find ?e ?n ?rn
                   :where [?e :event/event_id 1000]
                   [?e :event/event_type ?et]
@@ -193,4 +219,16 @@
                   [_ ?et ?n]
                   [_ ?r ?rn]]
                 @@rdb/store)
+
+  (datascript/q '[:find ?n
+                  :where
+                  [_ ?et ?n]
+                  [_ :filter/event_types ?et]
+                  ;; [?e :event/event_type ?et]
+                  ;; [?e :event/region ?r]
+                  ;; [_ ?et ?n]
+                  ;; [_ ?r ?rn]
+                  ]
+                @@rdb/store)
+
   )

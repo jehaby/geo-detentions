@@ -31,9 +31,14 @@
              [?o :ovd/id ?ovd-id]
              [?e :event/ovd ?o]
 
+
              [?e :event/date ?date]
              [_ :filter/date-from ?date-from]
              [_ :filter/date-till ?date-till]
+
+             [?e :event/event_type ?event-type]
+             [_ :filter/event_types ?event-type]
+
              [(< ?date ?date-till)]
              [(< ?date-from ?date)]]}))
 

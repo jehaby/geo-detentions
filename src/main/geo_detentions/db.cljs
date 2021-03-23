@@ -8,10 +8,6 @@
 (def filter-entity-id 142666)
 (def sort-entity-id 143666)
 
-(def filters [{:db/id filter-entity-id
-               :filter/date-from "2013-01-01"
-               :filter/date-till "2021-12-31"}])
-
 (def sorting [{:db/id sort-entity-id
                :sort/field :event/date
                :sort/asc? true}])
@@ -46,6 +42,12 @@
 (def event-enums (->> (seq enums->vals) ;; TODO: remove or rethink (how to get vals(labels) from datascript on pull?)
                       (map (partial apply hash-map))))
 
+(def filters [{:db/id filter-entity-id
+               :filter/date-from "2013-01-01"
+               :filter/date-till "2021-12-31"
+               :filter/event_types (-> vals->keywords :event/event_type vals)
+               }])
+
 (def initial-db
   (concat
    ovds
@@ -69,7 +71,9 @@
    ))
 
 
-(def conn (d/create-conn))
+(def schema {:filter/event_types {:db/cardinality :db.cardinality/many}})
+
+(def conn (d/create-conn schema))
 (rp/connect! conn)
 
 (comment

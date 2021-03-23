@@ -4,7 +4,9 @@
    [re-posh.core :as rp]
    [goog.object]
    [geo-detentions.subs :refer [<sub]]
-   [geo-detentions.db :as db]))
+   [geo-detentions.db :as db]
+   [react-select :default Select]
+   ))
 
 (defn map-inner [data ovds]
   (let [state (atom nil)
@@ -70,6 +72,28 @@
       #(let [new-asc? (if cur-sort-field? (not asc?) true)]
          (rp/dispatch [:set-sort field new-asc?]))}
      (str label (when cur-sort-field? sort-sym))]))
+
+(defn selectize-options
+  [m]
+  ;; transforms map of {label value} pairs to seq of maps {:label label :value value}}
+  (for [[label v] m]
+    {:label label :value (name v)}))
+
+(defn selectize-values
+  [k vals]
+  (let [lv (select-keys db/enums->vals vals)]
+    (for [[v label] lv]
+      {:label label :value (name v)})))
+
+(defn react-select
+  [placeholder options val on-change]
+  [:> Select
+   {:isMulti true
+    :options options
+    :placeholder placeholder
+    :value val
+    :on-change on-change
+    }])
 
 (defn detentions-table []
   (let [events (<sub [:sorted-events])
@@ -144,6 +168,21 @@
               (rp/dispatch [:set-filter :filter/date-till v]))
            }]]]]
 
+      [:div.navbar-item
+       [:div.field
+        [:label.label "Тип события"]
+        [:div.control
+         [react-select
+          "Тип события"
+          (selectize-options (:event/event_type db/vals->keywords))
+          (selectize-values "event_type" (:filter/event_types filters))
+          #(let [v (map
+                    (fn [m] (->> (get m "value")
+                                 (keyword "event_type")))
+                    (js->clj %))]
+             (rp/dispatch [:set-filter :filter/event_types v])
+             )]
+         ]]]
       ])])
 
 (defn main []
