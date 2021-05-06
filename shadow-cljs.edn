@@ -10,6 +10,7 @@
   [metosin/reitit "0.5.5"]
   [re-frame "1.1.1"]
   [datascript "1.0.3"]
+  [datascript-transit "0.3.0"]
   [re-posh "0.3.2"]
   ]
 
@@ -20,5 +21,8 @@
  :builds
  {:app
   {:target :browser
-   ;; :dev
-   :modules {:main {:init-fn geo-detentions.app/init!}}}}}
+
+   :modules {:main {:init-fn geo-detentions.app/init!}}
+
+   :release {:compiler-options {:optimizations :simple}}
+  }}}
