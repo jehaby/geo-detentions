@@ -1,0 +1,6 @@
+Проект по визуализации данных задержаний в рамках [[https://coda.io/@ovdinfo/hackathon-with-memes][отложенного хакатона от ОВД-инфо]].
+
+Использовал re-frame/leaflet/datascript.
+До приличного состоянии пока не допилен.
+
+Посмотреть можно [[https://jehaby.github.io/geo-detentions/][тут]].
