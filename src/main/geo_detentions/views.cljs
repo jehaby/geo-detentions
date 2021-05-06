@@ -8,6 +8,7 @@
    [react-select :default Select]
    ))
 
+
 (defn map-inner [data ovds]
   (let [state (atom nil)
         tile-url "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}"
@@ -23,7 +24,6 @@
      {:reagent-render
       (fn []
         [:div
-         [:h4 "Map"]
          [:div#map-canvas {:style {:height "600px" :width "90%"}}]])
 
       :component-did-mount

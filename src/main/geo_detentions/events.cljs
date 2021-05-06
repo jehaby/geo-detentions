@@ -4,6 +4,7 @@
    ;; [geo-detentions.ovds :refer [ovds]]
    [goog.labs.format.csv :as csv]
    [geo-detentions.db :as db]
+   [geo-detentions.config :as cfg]
    [ajax.core :refer [raw-response-format]]
    [day8.re-frame.http-fx]
    [re-posh.core :as rp]
@@ -41,7 +42,7 @@
  default-interceptors
  (fn [_ _]
    {:http-xhrio {:method :get
-                 :uri (str "/data/data_2017_2019.csv")
+                 :uri (str cfg/APP-PREFIX "/data/data_2017_2019.csv")
                  :timeout 5000
                  :response-format (raw-response-format)
                  :on-success [:load-detentions-success]

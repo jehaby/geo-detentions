@@ -11,12 +11,10 @@
   [re-frame "1.1.1"]
   [datascript "1.0.3"]
   [datascript-transit "0.3.0"]
-  [re-posh "0.3.2"]
-  ]
+  [re-posh "0.3.2"]]
 
  :dev-http {8142
-            {:root "public"
-             }}
+            {:root "public"}}
 
  :builds
  {:app
@@ -24,5 +22,7 @@
 
    :modules {:main {:init-fn geo-detentions.app/init!}}
 
-   :release {:compiler-options {:optimizations :simple}}
-  }}}
+   :release {:compiler-options {:optimizations :simple}
+             :closure-defines {geo-detentions.config/APP-PREFIX "/geo-detentions"}
+             :output-dir "docs/js"
+             }}}}
